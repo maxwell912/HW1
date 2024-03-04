@@ -4,9 +4,20 @@ import converter.Currencies.SupportedCurrencies
 import converter.Errors.{MoneyAmountShouldBePositiveException, UnsupportedCurrencyException, WrongCurrencyException}
 
 case class Money private (amount: BigDecimal, currency: String) {
-  def +(other: Money): Money = ???
-  def -(other: Money): Money = ???
-  def isSameCurrency(other: Money): Boolean = ???
+  def +(other: Money): Money = {
+    if (!isSameCurrency(other)) {
+      throw new WrongCurrencyException
+    }
+    Money(amount + other.amount, currency)
+  }
+
+  def -(other: Money): Money = {
+    if (!isSameCurrency(other)) {
+      throw new WrongCurrencyException
+    }
+    Money(amount - other.amount, currency)
+  }
+  def isSameCurrency(other: Money): Boolean = currency == other.currency
 }
 
 object Money {
