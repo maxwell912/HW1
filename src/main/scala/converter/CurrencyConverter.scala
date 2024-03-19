@@ -1,10 +1,18 @@
 package converter
 
-import Currencies.SupportedCurrencies
+import converter.Currencies._
 import converter.Errors.{UnsupportedCurrencyException, WrongCurrencyException}
 
 class CurrencyConverter(ratesDictionary: Map[String, Map[String, BigDecimal]]) {
-  def exchange(money: Money, toCurrency: String): Money = ???
+  def exchange(money: Money, toCurrency: String): Money = {
+    if (!SupportedCurrencies.contains(toCurrency)) throw new UnsupportedCurrencyException(toCurrency)
+    else if (money.currency == toCurrency) throw new WrongCurrencyException(toCurrency)
+    else {
+      val exchange_rate = ratesDictionary(money.currency)(toCurrency)
+      println(Money(money.amount * exchange_rate, toCurrency))
+      Money(money.amount * exchange_rate, toCurrency)
+    }
+  }
 }
 
 object CurrencyConverter {
@@ -16,6 +24,6 @@ object CurrencyConverter {
         toCurrencies.forall(_.keys.toSet.subsetOf(SupportedCurrencies))
     )
       new CurrencyConverter(ratesDictionary)
-    else throw new UnsupportedCurrencyException
+    else throw new UnsupportedCurrencyException("None")
   }
 }
