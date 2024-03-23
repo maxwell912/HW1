@@ -4,7 +4,16 @@ import Currencies.SupportedCurrencies
 import converter.Errors.{UnsupportedCurrencyException, WrongCurrencyException}
 
 class CurrencyConverter(ratesDictionary: Map[String, Map[String, BigDecimal]]) {
-  def exchange(money: Money, toCurrency: String): Money = ???
+  def exchange(money: Money, toCurrency: String): Money = {
+    if (money.currency != toCurrency) {
+    val fromCurrencies = money.currency
+    val rates = ratesDictionary.getOrElse(fromCurrencies, throw new UnsupportedCurrencyException)
+      .getOrElse(toCurrency, throw new UnsupportedCurrencyException)
+    val exchangedValue = rates * money.amount
+    Money(exchangedValue, toCurrency)
+  }
+  else throw new WrongCurrencyException
+  }
 }
 
 object CurrencyConverter {
